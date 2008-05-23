@@ -1,0 +1,38 @@
+2007-11-09:
+* Handle redirects that assume a base URL.
+
+2007-11-08:
+* Move spider_instance.rb, robot_rules.rb, and included_in_memcached.rb into
+  spider subdirectory.
+
+2007-11-02:
+* Memcached support.
+
+2007-10-31:
+* Add `setup' and `teardown' handlers.
+* Can set the headers for a HTTP request.
+* Changed :any to :every .
+* Changed the arguments to the :every, :success, :failure, and code handler.
+
+2007-10-23:
+* URLs without a page component but with a query component.
+* HTTP Redirect.
+* HTTPS.
+* Version 0.2.1 .
+
+2007-10-22:
+* Use RSpec to ensure that it mostly works.
+* Use WEBrick to create a small test server for additional testing.
+* Completely re-do the API to prepare for future expansion.
+* Add the ability to apply each URL to a series of custom allowed?-like
+  matchers.
+* BSD license.
+* Version 0.2.0 .
+
+2007-03-30:
+* Clean up the documentation.
+
+2007-03-28:
+* Change the tail recursion to a `while' loop, to please Ruby.
+* Documentation.
+* Initial release: version 0.1.0 .
