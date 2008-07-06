@@ -1,6 +1,6 @@
-# Use memcached to track cycles.
+# Use AmazonSQS to track nodes to visit.
 #
-# Copyright 2007 Mike Burns
+# Copyright 2008 John Nagro
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #      * Redistributions of source code must retain the above copyright
@@ -23,31 +23,44 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-require 'memcache'
+require 'rubygems'
+require 'right_aws'
+require 'yaml'
 
-# A specialized class using memcached to track items stored. It supports
-# three operations: new, <<, and include? . Together these can be used to 
-# add items to the memcache, then determine whether the item has been added.
+# A specialized class using AmazonSQS to track nodes to walk. It supports
+# two operations: push and pop . Together these can be used to 
+# add items to the queue, then pull items off the queue.
 #
-# To use it with Spider use the check_already_seen_with method:
+# This is useful if you want multiple Spider processes crawling the same
+# data set.
+#
+# To use it with Spider use the store_next_urls_with method:
 #
 #  Spider.start_at('http://example.com/') do |s|
-#    s.check_already_seen_with IncludedInMemcached.new('localhost:11211')
+#    s.store_next_urls_with NextUrlsInSQS.new(AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY, queue_name)
 #  end
-class IncludedInMemcached
-  # Construct a new IncludedInMemcached instance. All arguments here are
-  # passed to MemCache (part of the memcache-client gem).
-  def initialize(*a)
-    @c = MemCache.new(*a)
+class NextUrlsInSQS
+  # Construct a new NextUrlsInSQS instance. All arguments here are
+  # passed to RightAWS::SqsGen2 (part of the right_aws gem) or used
+  # to set the AmazonSQS queue name (optional).
+  def initialize(aws_access_key, aws_secret_access_key, queue_name = 'ruby-spider')
+    @sqs = RightAws::SqsGen2.new(aws_access_key, aws_secret_access_key)
+    @queue = @sqs.queue(queue_name)
   end
-
-  # Add an item to the memcache.
-  def <<(v)
-    @c.add(v.to_s, v)
+  
+  # Pull an item off the queue, loop until data is found. Data is 
+  # encoded with YAML.
+  def pop
+    while true
+      message = @queue.pop
+      return YAML::load(message.to_s) unless message.nil?
+      sleep 5
+    end
   end
-
-  # True if the item is in the memcache.
-  def include?(v)
-    @c.get(v.to_s) == v
-  end
+  
+  # Put data on the queue. Data is encoded with YAML.
+  def push(a_msg)
+    encoded_message = YAML::dump(a_msg)
+    @queue.push(a_msg)
+  end  
 end

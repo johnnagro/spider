@@ -1,3 +1,8 @@
+2008-07-06
+* Trap interrupts and shutdown gracefully
+* Support for custom urls-to-crawl objects
+* Example AmazonSQS urls-to-crawl support (next_urls_in_sqs.rb)
+
 2007-11-09:
 * Handle redirects that assume a base URL.
 
