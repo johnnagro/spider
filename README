@@ -75,6 +75,31 @@ scraping, collecting, and looping so that you can just handle the data.
    s.check_already_seen_with ExpireLinks.new
  end
 
+=== Store nodes to visit with Amazon SQS
+
+ require 'spider'
+ require 'spider/next_urls_in_sqs'
+ Spider.start_at('http://mike-burns.com') do |s|
+   s.store_next_urls_with NextUrlsInSQS.new(AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY)
+ end
+
+==== Store nodes to visit with a custom object
+
+ require 'spider'
+ class MyArray < Array
+   def pop
+	super
+   end
+  
+   def push(a_msg)
+     super(a_msg)
+   end
+ end
+
+ Spider.start_at('http://mike-burns.com') do |s|
+   s.store_next_urls_with MyArray.new
+ end
+
 === Create a URL graph
 
  require 'spider'
@@ -106,9 +131,10 @@ scraping, collecting, and looping so that you can just handle the data.
 
 == Author
 
-Mike Burns http://mike-burns.com mike@mike-burns.com
+John Nagro john.nagro@gmail.com
+Mike Burns http://mike-burns.com mike@mike-burns.com (original author)
 
-Help from Matt Horan, John Nagro, and Henri Cook.
+Help from Matt Horan, and Henri Cook.
 
 With `robot_rules' from James Edward Gray II via
 http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/177589

@@ -1,6 +1,6 @@
 # Specialized spidering rules.
 
-# Copyright 2007 Mike Burns
+# Copyright 2007-2008 Mike Burns & John Nagro
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #      * Redistributions of source code must retain the above copyright
@@ -51,7 +51,7 @@ class SpiderInstance
     @url_checks  = []
     @cache       = :memory
     @callbacks   = {}
-    @next_urls   = next_urls
+    @next_urls   = [next_urls]
     @seen        = seen
     @rules       = rules || RobotRules.new('Ruby Spider 1.0')
     @robots_seen = robots_seen
@@ -93,6 +93,30 @@ class SpiderInstance
       @seen = cacher
     else
       raise ArgumentError, 'expected something that responds to << and included?'
+    end
+  end
+
+  # The Web is a really, really, really big graph; as such, this list
+  # of nodes to visit grows really, really, really big.
+  #
+  # Change the object used to store nodes we have yet to walk. The default
+  # object is an instance of Array. Available with Spider is a wrapper of
+  # AmazonSQS.
+  #
+  # You can implement a custom class for this; any object passed to
+  # check_already_seen_with must understand just push and pop .
+  #
+  #  # default
+  #  store_next_urls_with Array.new
+  #
+  #  # AmazonSQS
+  #  require 'spider/next_urls_in_sqs'
+  #  store_next_urls_with NextUrlsInSQS.new(AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY, queue_name)
+  def store_next_urls_with(a_store)
+    tmp_next_urls = @next_urls
+    @next_urls = a_store
+    tmp_next_urls.each do |a_url_hash|
+      @next_urls.push a_url_hash
     end
   end
 
@@ -159,9 +183,11 @@ class SpiderInstance
     @headers = {}
   end
 
-  def start! #:nodoc:
-    next_urls = @next_urls
+  def start! #:nodoc: 
+    interrupted = false
+    trap("SIGINT") { interrupted = true } 
     begin
+      next_urls = @next_urls.pop
       tmp_n_u = {}
       next_urls.each do |prior_url, urls|
         urls.map do |a_url|
@@ -172,13 +198,18 @@ class SpiderInstance
           @setup.call(a_url) unless @setup.nil?
           get_page(parsed_url) do |response|
             do_callbacks(a_url, response, prior_url)
-            tmp_n_u[a_url] = generate_next_urls(a_url, response)
+            #tmp_n_u[a_url] = generate_next_urls(a_url, response)
+            #@next_urls.push tmp_n_u
+            generate_next_urls(a_url, response).each do |a_next_url|
+              @next_urls.push a_url => a_next_url
+            end
+            #exit if interrupted
           end
           @teardown.call(a_url) unless @teardown.nil?
+          exit if interrupted
         end
       end
-      next_urls = tmp_n_u
-    end while !next_urls.empty?
+    end while !@next_urls.empty?
   end
 
   def success_or_failure(code) #:nodoc:
