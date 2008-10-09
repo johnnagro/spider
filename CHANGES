@@ -1,3 +1,6 @@
+2008-10-09
+* fixed a situation with nested slashes in urls, thanks to Sander van der Vliet and John Buckley
+
 2008-07-06
 * Trap interrupts and shutdown gracefully
 * Support for custom urls-to-crawl objects

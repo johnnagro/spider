@@ -295,15 +295,17 @@ class SpiderInstance
   def construct_complete_url(base_url, additional_url, parsed_additional_url = nil) #:nodoc:
     parsed_additional_url ||= URI.parse(additional_url)
     case parsed_additional_url.scheme
-    when nil
-      u = base_url.is_a?(URI) ? base_url : URI.parse(base_url)
-      if additional_url[0].chr == '/'
-        "#{u.scheme}://#{u.host}:#{u.port}#{additional_url}"
-      elsif u.path.nil? || u.path == ''
-        "#{u.scheme}://#{u.host}:#{u.port}/#{additional_url}"
-      else
-        "#{u.scheme}://#{u.host}:#{u.port}/#{u.path}/#{additional_url}"
-      end
+      when nil
+        u = base_url.is_a?(URI) ? base_url : URI.parse(base_url)
+        if additional_url[0].chr == '/'
+          "#{u.scheme}://#{u.host}#{additional_url}"
+        elsif u.path.nil? || u.path == ''
+          "#{u.scheme}://#{u.host}/#{additional_url}"
+        elsif u.path[0].chr == '/'
+          "#{u.scheme}://#{u.host}#{u.path}/#{additional_url}"
+        else
+          "#{u.scheme}://#{u.host}/#{u.path}/#{additional_url}"
+        end
     else
       additional_url
     end

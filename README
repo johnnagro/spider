@@ -1,3 +1,4 @@
+
 Spider, a Web spidering library for Ruby. It handles the robots.txt,
 scraping, collecting, and looping so that you can just handle the data.
 
@@ -132,9 +133,14 @@ scraping, collecting, and looping so that you can just handle the data.
 == Author
 
 John Nagro john.nagro@gmail.com
+
 Mike Burns http://mike-burns.com mike@mike-burns.com (original author)
 
-Help from Matt Horan, and Henri Cook.
+Many thanks to:
+Matt Horan
+Henri Cook
+Sander van der Vliet
+John Buckley
 
 With `robot_rules' from James Edward Gray II via
 http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/177589
