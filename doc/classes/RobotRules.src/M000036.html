@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>allowed? (RobotRules)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/spider/robot_rules.rb, line 68</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">allowed?</span>( <span class="ruby-identifier">text_uri</span> )
+    <span class="ruby-identifier">uri</span>      = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">text_uri</span>)
+    <span class="ruby-identifier">location</span> = <span class="ruby-node">&quot;#{uri.host}:#{uri.port}&quot;</span>
+    <span class="ruby-identifier">path</span>     = <span class="ruby-identifier">uri</span>.<span class="ruby-identifier">path</span>
+
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">true</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-node">%w{http https}</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">uri</span>.<span class="ruby-identifier">scheme</span>)
+
+    <span class="ruby-keyword kw">not</span> <span class="ruby-ivar">@rules</span>[<span class="ruby-identifier">location</span>].<span class="ruby-identifier">any?</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">rule</span><span class="ruby-operator">|</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">index</span>(<span class="ruby-identifier">rule</span>) <span class="ruby-operator">==</span> <span class="ruby-value">0</span> }
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>
