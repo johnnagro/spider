@@ -81,8 +81,8 @@
     <div id="description">
       <p>
 A specialized class using memcached to track items stored. It supports
-three operations: <a href="IncludedInMemcached.html#M000001">new</a>,
-&lt;&lt;, and <a href="IncludedInMemcached.html#M000003">include?</a> .
+three operations: <a href="IncludedInMemcached.html#M000015">new</a>,
+&lt;&lt;, and <a href="IncludedInMemcached.html#M000017">include?</a> .
 Together these can be used to add items to the memcache, then determine
 whether the item has been added.
 </p>
@@ -105,9 +105,9 @@ check_already_seen_with method:
       <h3 class="section-bar">Methods</h3>
 
       <div class="name-list">
-      <a href="#M000002">&lt;&lt;</a>&nbsp;&nbsp;
-      <a href="#M000003">include?</a>&nbsp;&nbsp;
-      <a href="#M000001">new</a>&nbsp;&nbsp;
+      <a href="#M000016">&lt;&lt;</a>&nbsp;&nbsp;
+      <a href="#M000017">include?</a>&nbsp;&nbsp;
+      <a href="#M000015">new</a>&nbsp;&nbsp;
       </div>
     </div>
 
@@ -129,41 +129,33 @@ check_already_seen_with method:
     <div id="methods">
       <h3 class="section-bar">Public Class methods</h3>
 
-      <div id="method-M000001" class="method-detail">
-        <a name="M000001"></a>
+      <div id="method-M000015" class="method-detail">
+        <a name="M000015"></a>
 
         <div class="method-heading">
-          <a href="#M000001" class="method-signature">
+          <a href="IncludedInMemcached.src/M000015.html" target="Code" class="method-signature"
+            onclick="popupCode('IncludedInMemcached.src/M000015.html');return false;">
           <span class="method-name">new</span><span class="method-args">(*a)</span>
           </a>
         </div>
       
         <div class="method-description">
           <p>
-Construct a <a href="IncludedInMemcached.html#M000001">new</a> <a
+Construct a <a href="IncludedInMemcached.html#M000015">new</a> <a
 href="IncludedInMemcached.html">IncludedInMemcached</a> instance. All
 arguments here are passed to MemCache (part of the memcache-client gem).
 </p>
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000001-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000001-source">
-<pre>
-<span class="ruby-comment cmt"># File lib/spider/included_in_memcached.rb, line 39</span>
-  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">a</span>)
-    <span class="ruby-ivar">@c</span> = <span class="ruby-constant">MemCache</span>.<span class="ruby-identifier">new</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">a</span>)
-  <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
         </div>
       </div>
 
       <h3 class="section-bar">Public Instance methods</h3>
 
-      <div id="method-M000002" class="method-detail">
-        <a name="M000002"></a>
+      <div id="method-M000016" class="method-detail">
+        <a name="M000016"></a>
 
         <div class="method-heading">
-          <a href="#M000002" class="method-signature">
+          <a href="IncludedInMemcached.src/M000016.html" target="Code" class="method-signature"
+            onclick="popupCode('IncludedInMemcached.src/M000016.html');return false;">
           <span class="method-name">&lt;&lt;</span><span class="method-args">(v)</span>
           </a>
         </div>
@@ -172,24 +164,15 @@ arguments here are passed to MemCache (part of the memcache-client gem).
           <p>
 Add an item to the memcache.
 </p>
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000002-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000002-source">
-<pre>
-<span class="ruby-comment cmt"># File lib/spider/included_in_memcached.rb, line 44</span>
-  <span class="ruby-keyword kw">def</span> <span class="ruby-operator">&lt;&lt;</span>(<span class="ruby-identifier">v</span>)
-    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">v</span>.<span class="ruby-identifier">to_s</span>, <span class="ruby-identifier">v</span>)
-  <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
         </div>
       </div>
 
-      <div id="method-M000003" class="method-detail">
-        <a name="M000003"></a>
+      <div id="method-M000017" class="method-detail">
+        <a name="M000017"></a>
 
         <div class="method-heading">
-          <a href="#M000003" class="method-signature">
+          <a href="IncludedInMemcached.src/M000017.html" target="Code" class="method-signature"
+            onclick="popupCode('IncludedInMemcached.src/M000017.html');return false;">
           <span class="method-name">include?</span><span class="method-args">(v)</span>
           </a>
         </div>
@@ -198,16 +181,6 @@ Add an item to the memcache.
           <p>
 True if the item is in the memcache.
 </p>
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000003-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000003-source">
-<pre>
-<span class="ruby-comment cmt"># File lib/spider/included_in_memcached.rb, line 49</span>
-  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">include?</span>(<span class="ruby-identifier">v</span>)
-    <span class="ruby-ivar">@c</span>.<span class="ruby-identifier">get</span>(<span class="ruby-identifier">v</span>.<span class="ruby-identifier">to_s</span>) <span class="ruby-operator">==</span> <span class="ruby-identifier">v</span>
-  <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
         </div>
       </div>
 

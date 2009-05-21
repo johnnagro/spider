@@ -86,13 +86,14 @@
       <h3 class="section-bar">Methods</h3>
 
       <div class="name-list">
-      <a href="#M000004">add_url_check</a>&nbsp;&nbsp;
-      <a href="#M000005">check_already_seen_with</a>&nbsp;&nbsp;
-      <a href="#M000010">clear_headers</a>&nbsp;&nbsp;
-      <a href="#M000009">headers</a>&nbsp;&nbsp;
-      <a href="#M000006">on</a>&nbsp;&nbsp;
-      <a href="#M000007">setup</a>&nbsp;&nbsp;
-      <a href="#M000008">teardown</a>&nbsp;&nbsp;
+      <a href="#M000021">add_url_check</a>&nbsp;&nbsp;
+      <a href="#M000022">check_already_seen_with</a>&nbsp;&nbsp;
+      <a href="#M000028">clear_headers</a>&nbsp;&nbsp;
+      <a href="#M000027">headers</a>&nbsp;&nbsp;
+      <a href="#M000024">on</a>&nbsp;&nbsp;
+      <a href="#M000025">setup</a>&nbsp;&nbsp;
+      <a href="#M000023">store_next_urls_with</a>&nbsp;&nbsp;
+      <a href="#M000026">teardown</a>&nbsp;&nbsp;
       </div>
     </div>
 
@@ -114,11 +115,12 @@
     <div id="methods">
       <h3 class="section-bar">Public Instance methods</h3>
 
-      <div id="method-M000004" class="method-detail">
-        <a name="M000004"></a>
+      <div id="method-M000021" class="method-detail">
+        <a name="M000021"></a>
 
         <div class="method-heading">
-          <a href="#M000004" class="method-signature">
+          <a href="SpiderInstance.src/M000021.html" target="Code" class="method-signature"
+            onclick="popupCode('SpiderInstance.src/M000021.html');return false;">
           <span class="method-name">add_url_check</span><span class="method-args">(&amp;block)</span>
           </a>
         </div>
@@ -136,24 +138,15 @@ href="http://mike-burns.com">mike-burns.com</a>&#8217;:
 <pre>
  add_url_check { |a_url| a_url =~ %r{^http://mike-burns.com.*}
 </pre>
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000004-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000004-source">
-<pre>
-<span class="ruby-comment cmt"># File lib/spider/spider_instance.rb, line 70</span>
-  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_url_check</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
-    <span class="ruby-ivar">@url_checks</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">block</span>
-  <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
         </div>
       </div>
 
-      <div id="method-M000005" class="method-detail">
-        <a name="M000005"></a>
+      <div id="method-M000022" class="method-detail">
+        <a name="M000022"></a>
 
         <div class="method-heading">
-          <a href="#M000005" class="method-signature">
+          <a href="SpiderInstance.src/M000022.html" target="Code" class="method-signature"
+            onclick="popupCode('SpiderInstance.src/M000022.html');return false;">
           <span class="method-name">check_already_seen_with</span><span class="method-args">(cacher)</span>
           </a>
         </div>
@@ -171,7 +164,7 @@ href="Spider.html">Spider</a> is a wrapper of memcached.
 </p>
 <p>
 You can implement a custom class for this; any object passed to <a
-href="SpiderInstance.html#M000005">check_already_seen_with</a> must
+href="SpiderInstance.html#M000022">check_already_seen_with</a> must
 understand just &lt;&lt; and included? .
 </p>
 <pre>
@@ -182,54 +175,32 @@ understand just &lt;&lt; and included? .
  require 'spider/included_in_memcached'
  check_already_seen_with IncludedInMemcached.new('localhost:11211')
 </pre>
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000005-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000005-source">
-<pre>
-<span class="ruby-comment cmt"># File lib/spider/spider_instance.rb, line 91</span>
-  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">check_already_seen_with</span>(<span class="ruby-identifier">cacher</span>)
-    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">cacher</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:&lt;&lt;</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">cacher</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:include?</span>)
-      <span class="ruby-ivar">@seen</span> = <span class="ruby-identifier">cacher</span>
-    <span class="ruby-keyword kw">else</span>
-      <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">'expected something that responds to &lt;&lt; and included?'</span>
-    <span class="ruby-keyword kw">end</span>
-  <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
         </div>
       </div>
 
-      <div id="method-M000010" class="method-detail">
-        <a name="M000010"></a>
+      <div id="method-M000028" class="method-detail">
+        <a name="M000028"></a>
 
         <div class="method-heading">
-          <a href="#M000010" class="method-signature">
+          <a href="SpiderInstance.src/M000028.html" target="Code" class="method-signature"
+            onclick="popupCode('SpiderInstance.src/M000028.html');return false;">
           <span class="method-name">clear_headers</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p>
-Reset the <a href="SpiderInstance.html#M000009">headers</a> hash.
+Reset the <a href="SpiderInstance.html#M000027">headers</a> hash.
 </p>
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000010-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000010-source">
-<pre>
-<span class="ruby-comment cmt"># File lib/spider/spider_instance.rb, line 158</span>
-  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">clear_headers</span>
-    <span class="ruby-ivar">@headers</span> = {}
-  <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
         </div>
       </div>
 
-      <div id="method-M000009" class="method-detail">
-        <a name="M000009"></a>
+      <div id="method-M000027" class="method-detail">
+        <a name="M000027"></a>
 
         <div class="method-heading">
-          <a href="#M000009" class="method-signature">
+          <a href="SpiderInstance.src/M000027.html" target="Code" class="method-signature"
+            onclick="popupCode('SpiderInstance.src/M000027.html');return false;">
           <span class="method-name">headers</span><span class="method-args">()</span>
           </a>
         </div>
@@ -241,24 +212,15 @@ Use like a hash:
 <pre>
  headers['Cookies'] = 'user_id=1;password=btrross3'
 </pre>
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000009-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000009-source">
-<pre>
-<span class="ruby-comment cmt"># File lib/spider/spider_instance.rb, line 146</span>
-  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">headers</span>
-    <span class="ruby-constant">HeaderSetter</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">self</span>)
-  <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
         </div>
       </div>
 
-      <div id="method-M000006" class="method-detail">
-        <a name="M000006"></a>
+      <div id="method-M000024" class="method-detail">
+        <a name="M000024"></a>
 
         <div class="method-heading">
-          <a href="#M000006" class="method-signature">
+          <a href="SpiderInstance.src/M000024.html" target="Code" class="method-signature"
+            onclick="popupCode('SpiderInstance.src/M000024.html');return false;">
           <span class="method-name">on</span><span class="method-args">(code, p = nil, &amp;block)</span>
           </a>
         </div>
@@ -290,30 +252,15 @@ For example:
    puts &quot;Given this code: #{resp.code}&quot;
  end
 </pre>
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000006-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000006-source">
-<pre>
-<span class="ruby-comment cmt"># File lib/spider/spider_instance.rb, line 121</span>
-  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">on</span>(<span class="ruby-identifier">code</span>, <span class="ruby-identifier">p</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
-    <span class="ruby-identifier">f</span> = <span class="ruby-identifier">p</span> <span class="ruby-value">? </span><span class="ruby-identifier">p</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">block</span>
-    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">code</span>
-    <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Fixnum</span>
-      <span class="ruby-ivar">@callbacks</span>[<span class="ruby-identifier">code</span>] = <span class="ruby-identifier">f</span>
-    <span class="ruby-keyword kw">else</span>
-      <span class="ruby-ivar">@callbacks</span>[<span class="ruby-identifier">code</span>.<span class="ruby-identifier">to_sym</span>] = <span class="ruby-identifier">f</span>
-    <span class="ruby-keyword kw">end</span>
-  <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
         </div>
       </div>
 
-      <div id="method-M000007" class="method-detail">
-        <a name="M000007"></a>
+      <div id="method-M000025" class="method-detail">
+        <a name="M000025"></a>
 
         <div class="method-heading">
-          <a href="#M000007" class="method-signature">
+          <a href="SpiderInstance.src/M000025.html" target="Code" class="method-signature"
+            onclick="popupCode('SpiderInstance.src/M000025.html');return false;">
           <span class="method-name">setup</span><span class="method-args">(p = nil, &amp;block)</span>
           </a>
         </div>
@@ -327,24 +274,51 @@ Run before the HTTP request. Given the URL as a string.
    headers['Cookies'] = 'user_id=1;admin=true'
  end
 </pre>
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000007-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000007-source">
-<pre>
-<span class="ruby-comment cmt"># File lib/spider/spider_instance.rb, line 135</span>
-  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">setup</span>(<span class="ruby-identifier">p</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
-    <span class="ruby-ivar">@setup</span> = <span class="ruby-identifier">p</span> <span class="ruby-value">? </span><span class="ruby-identifier">p</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">block</span>
-  <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
         </div>
       </div>
 
-      <div id="method-M000008" class="method-detail">
-        <a name="M000008"></a>
+      <div id="method-M000023" class="method-detail">
+        <a name="M000023"></a>
 
         <div class="method-heading">
-          <a href="#M000008" class="method-signature">
+          <a href="SpiderInstance.src/M000023.html" target="Code" class="method-signature"
+            onclick="popupCode('SpiderInstance.src/M000023.html');return false;">
+          <span class="method-name">store_next_urls_with</span><span class="method-args">(a_store)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+The Web is a really, really, really big graph; as such, this list of nodes
+to visit grows really, really, really big.
+</p>
+<p>
+Change the object used to store nodes we have yet to walk. The default
+object is an instance of Array. Available with <a
+href="Spider.html">Spider</a> is a wrapper of AmazonSQS.
+</p>
+<p>
+You can implement a custom class for this; any object passed to <a
+href="SpiderInstance.html#M000022">check_already_seen_with</a> must
+understand just push and pop .
+</p>
+<pre>
+ # default
+ store_next_urls_with Array.new
+
+ # AmazonSQS
+ require 'spider/next_urls_in_sqs'
+ store_next_urls_with NextUrlsInSQS.new(AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY, queue_name)
+</pre>
+        </div>
+      </div>
+
+      <div id="method-M000026" class="method-detail">
+        <a name="M000026"></a>
+
+        <div class="method-heading">
+          <a href="SpiderInstance.src/M000026.html" target="Code" class="method-signature"
+            onclick="popupCode('SpiderInstance.src/M000026.html');return false;">
           <span class="method-name">teardown</span><span class="method-args">(p = nil, &amp;block)</span>
           </a>
         </div>
@@ -353,16 +327,6 @@ Run before the HTTP request. Given the URL as a string.
           <p>
 Run last, once for each page. Given the URL as a string.
 </p>
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000008-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000008-source">
-<pre>
-<span class="ruby-comment cmt"># File lib/spider/spider_instance.rb, line 140</span>
-  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">teardown</span>(<span class="ruby-identifier">p</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
-    <span class="ruby-ivar">@teardown</span> = <span class="ruby-identifier">p</span> <span class="ruby-value">? </span><span class="ruby-identifier">p</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">block</span>
-  <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
         </div>
       </div>
 

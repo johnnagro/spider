@@ -56,7 +56,7 @@
     </tr>
     <tr class="top-aligned-row">
       <td><strong>Last Update:</strong></td>
-      <td>Thu Nov 08 17:29:01 -0500 2007</td>
+      <td>Thu May 21 13:19:06 +0000 2009</td>
     </tr>
     </table>
   </div>
@@ -70,9 +70,12 @@
 
     <div id="description">
       <p>
-Copyright 2007 Mike Burns <a href="../../classes/Spider.html">Spider</a>, a
-Web spidering library for Ruby. It handles the robots.txt, scraping,
-collecting, and looping so that you can just handle the data.
+Copyright 2007-2008 Mike Burns &amp; John Nagro
+</p>
+<p>
+<a href="../../classes/Spider.html">Spider</a>, a Web spidering library for
+Ruby. It handles the robots.txt, scraping, collecting, and looping so that
+you can just handle the data.
 </p>
 <h2>Examples</h2>
 <h3>Crawl the Web, loading each page in turn, until you run out of memory</h3>
@@ -133,18 +136,42 @@ collecting, and looping so that you can just handle the data.
 <h3>Track cycles with a custom object</h3>
 <pre>
  require 'spider'
-
  class ExpireLinks &lt; Hash
    def &lt;&lt;(v)
-     [v] = Time.now
+     self[v] = Time.now
    end
    def include?(v)
-     [v] &amp;&amp; (Time.now + 86400) &lt;= [v]
+     self[v].kind_of?(Time) &amp;&amp; (self[v] + 86400) &gt;= Time.now
    end
  end
 
  Spider.start_at('http://mike-burns.com/') do |s|
    s.check_already_seen_with ExpireLinks.new
+ end
+</pre>
+<h3>Store nodes to visit with Amazon SQS</h3>
+<pre>
+ require 'spider'
+ require 'spider/next_urls_in_sqs'
+ Spider.start_at('http://mike-burns.com') do |s|
+   s.store_next_urls_with NextUrlsInSQS.new(AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY)
+ end
+</pre>
+<h4>Store nodes to visit with a custom object</h4>
+<pre>
+ require 'spider'
+ class MyArray &lt; Array
+   def pop
+      super
+   end
+
+   def push(a_msg)
+     super(a_msg)
+   end
+ end
+
+ Spider.start_at('http://mike-burns.com') do |s|
+   s.store_next_urls_with MyArray.new
  end
 </pre>
 <h3>Create a URL graph</h3>
@@ -178,11 +205,15 @@ collecting, and looping so that you can just handle the data.
 </pre>
 <h2>Author</h2>
 <p>
-Mike Burns <a href="http://mike-burns.com">mike-burns.com</a>
-mike@mike-burns.com
+John Nagro john.nagro@gmail.com
 </p>
 <p>
-Help from Matt Horan, John Nagro, and Henri Cook.
+Mike Burns <a href="http://mike-burns.com">mike-burns.com</a>
+mike@mike-burns.com (original author)
+</p>
+<p>
+Many thanks to: Matt Horan Henri Cook Sander van der Vliet John Buckley
+Brian Campbell
 </p>
 <p>
 With `robot_rules&#8217; from James Edward Gray II via <a

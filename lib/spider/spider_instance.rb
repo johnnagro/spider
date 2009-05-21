@@ -53,7 +53,7 @@ class SpiderInstance
     @callbacks   = {}
     @next_urls   = [next_urls]
     @seen        = seen
-    @rules       = rules || RobotRules.new('Ruby Spider 1.0')
+    @rules       = rules || RobotRules.new('Ruby Spider 0.4.4')
     @robots_seen = robots_seen
     @headers     = {}
     @setup       = nil
@@ -227,12 +227,18 @@ class SpiderInstance
 
   # True if the robots.txt for that URL allows access to it.
   def allowed?(a_url, parsed_url) # :nodoc:
+    return false unless ['http','https'].include?(parsed_url.scheme)
     u = "#{parsed_url.scheme}://#{parsed_url.host}:#{parsed_url.port}/robots.txt"
+    parsed_u = URI.parse(u)
+    return false unless @url_checks.map{|url_check|url_check.call(a_url)}.all?
     begin
       unless @robots_seen.include?(u)
-        open(u, 'User-Agent' => 'Ruby Spider',
-          'Accept' => 'text/html,text/xml,application/xml,text/plain') do |url|
-          @rules.parse(u, url.read)
+        #open(u, 'User-Agent' => 'Ruby Spider', 
+        #  'Accept' => 'text/html,text/xml,application/xml,text/plain', :ssl_verify => false) do |url|
+        #  @rules.parse(u, url.read)
+        #end
+        get_page(parsed_u) do |r|
+          @rules.parse(u, r.body)
         end
         @robots_seen << u
       end
@@ -248,10 +254,12 @@ class SpiderInstance
     @seen << parsed_url
     begin
       http = Net::HTTP.new(parsed_url.host, parsed_url.port)
-      http.use_ssl = parsed_url.scheme == 'https'
+      if parsed_url.scheme == 'https'
+        http.use_ssl = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
       # Uses start because http.finish cannot be called.
-      r = http.start {|h| h.request(Net::HTTP::Get.new(parsed_url.request_uri,
-                                                       @headers))}
+      r = http.start {|h| h.request(Net::HTTP::Get.new(parsed_url.request_uri, @headers))}
       if r.redirect?
         get_page(URI.parse(construct_complete_url(parsed_url,r['Location'])), &block)
       else

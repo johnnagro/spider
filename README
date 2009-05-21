@@ -62,13 +62,12 @@ scraping, collecting, and looping so that you can just handle the data.
 === Track cycles with a custom object
 
  require 'spider'
-
  class ExpireLinks < Hash
    def <<(v)
-     [v] = Time.now
+     self[v] = Time.now
    end
    def include?(v)
-     [v] && (Time.now + 86400) <= [v]
+     self[v].kind_of?(Time) && (self[v] + 86400) >= Time.now
    end
  end
 
@@ -141,6 +140,7 @@ Matt Horan
 Henri Cook
 Sander van der Vliet
 John Buckley
+Brian Campbell
 
 With `robot_rules' from James Edward Gray II via
 http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/177589

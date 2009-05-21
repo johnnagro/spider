@@ -1,3 +1,9 @@
+2009-05-21
+* fixed an issue with robots.txt on ssl hosts
+* fixed an issue with pulling robots.txt from disallowed hosts
+* fixed a documentation error with ExpiredLinks
+* Many thanks to Brian Campbell
+
 2008-10-09
 * fixed a situation with nested slashes in urls, thanks to Sander van der Vliet and John Buckley
 

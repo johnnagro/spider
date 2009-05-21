@@ -14,5 +14,5 @@ spec = Gem::Specification.new do |s|
 A Web spidering library: handles robots.txt, scraping, finding more
 links, and doing it all over again.
 EOF
-  s.version = '0.4.3'
+  s.version = '0.4.4'
 end
