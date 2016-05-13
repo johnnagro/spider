@@ -1,5 +1,7 @@
 require 'rubygems'
 
+require File.expand_path('../lib/spider', __FILE__)
+
 spec = Gem::Specification.new do |s|
   s.author = 'John Nagro'
   s.email = 'john.nagro@gmail.com'
