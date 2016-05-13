@@ -1,3 +1,9 @@
+2016-05-13
+* fixed #1 thanks to @eribertomota
+* got it running on more recent versions of ruby
+* cleaned up the docs a bit
+* cleaned up the licensing and attribution
+
 2009-05-21
 * fixed an issue with robots.txt on ssl hosts
 * fixed an issue with pulling robots.txt from disallowed hosts
