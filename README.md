@@ -9,14 +9,14 @@ scraping, collecting, and looping so that you can just handle the data._
 
 ```ruby
  require 'spider'
- Spider.start_at('http://mike-burns.com/') {}
+ Spider.start_at('http://cashcats.biz/') {}
 ```
 
 ### To handle erroneous responses
 
 ```ruby
  require 'spider'
- Spider.start_at('http://mike-burns.com/') do |s|
+ Spider.start_at('http://cashcats.biz/') do |s|
    s.on :failure do |a_url, resp, prior_url|
      puts "URL failed: #{a_url}"
      puts " linked from #{prior_url}"
@@ -28,7 +28,7 @@ scraping, collecting, and looping so that you can just handle the data._
 
 ```ruby
  require 'spider'
- Spider.start_at('http://mike-burns.com/') do |s|
+ Spider.start_at('http://cashcats.biz/') do |s|
    s.on :success do |a_url, resp, prior_url|
      puts "#{a_url}: #{resp.code}"
      puts resp.body
@@ -41,9 +41,9 @@ scraping, collecting, and looping so that you can just handle the data._
 
 ```ruby
  require 'spider'
- Spider.start_at('http://mike-burns.com/') do |s|
+ Spider.start_at('http://cashcats.biz/') do |s|
    s.add_url_check do |a_url|
-     a_url =~ %r{^http://mike-burns.com.*}
+     a_url =~ %r{^http://cashcats.biz.*}
    end
  end
 ```
@@ -52,7 +52,7 @@ scraping, collecting, and looping so that you can just handle the data._
 
 ```ruby
  require 'spider'
- Spider.start_at('http://mike-burns.com/') do |s|
+ Spider.start_at('http://cashcats.biz/') do |s|
    s.setup do |a_url|
      if a_url =~ %r{^http://.*wikipedia.*}
        headers['User-Agent'] = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
@@ -67,7 +67,7 @@ scraping, collecting, and looping so that you can just handle the data._
  require 'spider'
  require 'spider/included_in_memcached'
  SERVERS = ['10.0.10.2:11211','10.0.10.3:11211','10.0.10.4:11211']
- Spider.start_at('http://mike-burns.com/') do |s|
+ Spider.start_at('http://cashcats.biz/') do |s|
    s.check_already_seen_with IncludedInMemcached.new(SERVERS)
  end
 ```
@@ -85,7 +85,7 @@ scraping, collecting, and looping so that you can just handle the data._
    end
  end
 
- Spider.start_at('http://mike-burns.com/') do |s|
+ Spider.start_at('http://cashcats.biz/') do |s|
    s.check_already_seen_with ExpireLinks.new
  end
 ```
@@ -95,7 +95,7 @@ scraping, collecting, and looping so that you can just handle the data._
 ```ruby
  require 'spider'
  require 'spider/next_urls_in_sqs'
- Spider.start_at('http://mike-burns.com') do |s|
+ Spider.start_at('http://cashcats.biz') do |s|
    s.store_next_urls_with NextUrlsInSQS.new(AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY)
  end
 ```
@@ -114,7 +114,7 @@ scraping, collecting, and looping so that you can just handle the data._
    end
  end
 
- Spider.start_at('http://mike-burns.com') do |s|
+ Spider.start_at('http://cashcats.biz') do |s|
    s.store_next_urls_with MyArray.new
  end
 ```
@@ -124,8 +124,8 @@ scraping, collecting, and looping so that you can just handle the data._
 ```ruby
  require 'spider'
  nodes = {}
- Spider.start_at('http://mike-burns.com/') do |s|
-   s.add_url_check {|a_url| a_url =~ %r{^http://mike-burns.com.*} }
+ Spider.start_at('http://cashcats.biz/') do |s|
+   s.add_url_check {|a_url| a_url =~ %r{^http://cashcats.biz.*} }
 
    s.on(:every) do |a_url, resp, prior_url|
      nodes[prior_url] ||= []

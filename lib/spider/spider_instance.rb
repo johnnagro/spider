@@ -41,9 +41,9 @@ class SpiderInstance
   # All predicates must be true in order for a URL to proceed.
   #
   # Takes a block that takes a string and produces a boolean. For example, this
-  # will ensure that the URL starts with 'http://mike-burns.com':
+  # will ensure that the URL starts with 'http://cashcats.biz':
   #
-  #  add_url_check { |a_url| a_url =~ %r{^http://mike-burns.com.*}
+  #  add_url_check { |a_url| a_url =~ %r{^http://cashcats.biz.*}
   def add_url_check(&block)
     @url_checks << block
   end

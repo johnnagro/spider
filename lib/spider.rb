@@ -16,9 +16,9 @@ class Spider
   # the discovered Web pages. See SpiderInstance for the possible rules and
   # handlers.
   #
-  #  Spider.start_at('http://mike-burns.com/') do |s|
+  #  Spider.start_at('http://cashcats.biz/') do |s|
   #    s.add_url_check do |a_url|
-  #      a_url =~ %r{^http://mike-burns.com.*}
+  #      a_url =~ %r{^http://cashcats.biz.*}
   #    end
   #
   #    s.on 404 do |a_url, resp, prior_url|
