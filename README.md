@@ -3,16 +3,16 @@
 _a Web spidering library for Ruby. It handles the robots.txt,
 scraping, collecting, and looping so that you can just handle the data._
 
-== Examples
+## Examples
 
-=== Crawl the Web, loading each page in turn, until you run out of memory
+### Crawl the Web, loading each page in turn, until you run out of memory
 
 ```ruby
  require 'spider'
  Spider.start_at('http://mike-burns.com/') {}
 ```
 
-=== To handle erroneous responses
+### To handle erroneous responses
 
 ```ruby
  require 'spider'
@@ -24,7 +24,7 @@ scraping, collecting, and looping so that you can just handle the data._
  end
 ```
 
-=== Or handle successful responses
+### Or handle successful responses
 
 ```ruby
  require 'spider'
@@ -37,7 +37,7 @@ scraping, collecting, and looping so that you can just handle the data._
  end
 ```
 
-=== Limit to just one domain
+### Limit to just one domain
 
 ```ruby
  require 'spider'
@@ -48,7 +48,7 @@ scraping, collecting, and looping so that you can just handle the data._
  end
 ```
 
-=== Pass headers to some requests
+### Pass headers to some requests
 
 ```ruby
  require 'spider'
@@ -61,7 +61,7 @@ scraping, collecting, and looping so that you can just handle the data._
  end
 ```
 
-=== Use memcached to track cycles
+### Use memcached to track cycles
 
 ```ruby
  require 'spider'
@@ -72,7 +72,7 @@ scraping, collecting, and looping so that you can just handle the data._
  end
 ```
 
-=== Track cycles with a custom object
+### Track cycles with a custom object
 
 ```ruby
  require 'spider'
@@ -90,7 +90,7 @@ scraping, collecting, and looping so that you can just handle the data._
  end
 ```
 
-=== Store nodes to visit with Amazon SQS
+### Store nodes to visit with Amazon SQS
 
 ```ruby
  require 'spider'
@@ -100,7 +100,7 @@ scraping, collecting, and looping so that you can just handle the data._
  end
 ```
 
-==== Store nodes to visit with a custom object
+###= Store nodes to visit with a custom object
 
 ```ruby
  require 'spider'
@@ -119,7 +119,7 @@ scraping, collecting, and looping so that you can just handle the data._
  end
 ```
 
-=== Create a URL graph
+### Create a URL graph
 
 ```ruby
  require 'spider'
@@ -134,7 +134,7 @@ scraping, collecting, and looping so that you can just handle the data._
  end
 ```
 
-=== Use a proxy
+### Use a proxy
 
 ```ruby
  require 'net/http_configuration'
@@ -152,18 +152,18 @@ scraping, collecting, and looping so that you can just handle the data._
  end
 ```
 
-== Author
+## Author
 
 John Nagro john.nagro@gmail.com
 
 Mike Burns http://mike-burns.com mike@mike-burns.com (original author)
 
 Many thanks to:
-Matt Horan
-Henri Cook
-Sander van der Vliet
-John Buckley
-Brian Campbell
+* Matt Horan
+* Henri Cook
+* Sander van der Vliet
+* John Buckley
+* Brian Campbell
 
-With `robot_rules' from James Edward Gray II via
+With `robot_rules` from James Edward Gray II via
 http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/177589
