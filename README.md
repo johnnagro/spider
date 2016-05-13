@@ -151,20 +151,3 @@ scraping, collecting, and looping so that you can just handle the data._
    end
  end
 ```
-
-## Author
-
-John Nagro john.nagro@gmail.com
-
-Mike Burns http://mike-burns.com mike@mike-burns.com (original author)
-
-Many thanks to:
-* Matt Horan
-* Henri Cook
-* Sander van der Vliet
-* John Buckley
-* Brian Campbell
-* Joao Eriberto Mota Filho
-
-With `robot_rules` from James Edward Gray II via
-http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/177589

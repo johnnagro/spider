@@ -4,6 +4,8 @@
 #
 #  Created by James Edward Gray II on 2006-01-31.
 #  Copyright 2006 Gray Productions. All rights reserved.
+#  https://github.com/eribertomota/robot_rules.rb
+#  https://github.com/johnnagro/spider/issues/1
 
 require "uri"
 
