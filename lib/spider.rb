@@ -61,7 +61,7 @@ class Spider
 
   def self.start_at(a_url, &block)
     rules    = RobotRules.new("Ruby Spider #{Spider::VERSION}")
-    a_spider = SpiderInstance.new({nil => a_url}, [], rules, [])
+    a_spider = SpiderInstance.new({nil => [a_url]}, [], rules, [])
     block.call(a_spider)
     a_spider.start!
   end
