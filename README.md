@@ -164,6 +164,7 @@ Many thanks to:
 * Sander van der Vliet
 * John Buckley
 * Brian Campbell
+* Joao Eriberto Mota Filho
 
 With `robot_rules` from James Edward Gray II via
 http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/177589
