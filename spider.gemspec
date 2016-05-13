@@ -4,7 +4,7 @@ spec = Gem::Specification.new do |s|
   s.author = 'John Nagro'
   s.email = 'john.nagro@gmail.com'
   s.has_rdoc = true
-  s.homepage = 'http://spider.rubyforge.org/'
+  s.homepage = 'https://github.com/johnnagro/spider'
   s.name = 'spider'
   s.rubyforge_project = 'spider'
   s.summary = 'A Web spidering library'
@@ -14,5 +14,5 @@ spec = Gem::Specification.new do |s|
 A Web spidering library: handles robots.txt, scraping, finding more
 links, and doing it all over again.
 EOF
-  s.version = '0.4.4'
+  s.version = Spider::VERSION
 end

@@ -11,7 +11,7 @@
 #      * Neither the name Mike Burns nor the
 #      names of his contributors may be used to endorse or promote products
 #      derived from this software without specific prior written permission.
-#  
+#
 # THIS SOFTWARE IS PROVIDED BY Mike Burns ``AS IS'' AND ANY
 # EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -53,7 +53,7 @@ class SpiderInstance
     @callbacks   = {}
     @next_urls   = [next_urls]
     @seen        = seen
-    @rules       = rules || RobotRules.new('Ruby Spider 0.4.4')
+    @rules       = rules || RobotRules.new("Ruby Spider #{Spider::VERSION}")
     @robots_seen = robots_seen
     @headers     = {}
     @setup       = nil
@@ -126,7 +126,7 @@ class SpiderInstance
   #
   # The arguments to the block are: the URL as a string, an instance of
   # Net::HTTPResponse, and the prior URL as a string.
-  # 
+  #
   #
   # For example:
   #
@@ -183,9 +183,9 @@ class SpiderInstance
     @headers = {}
   end
 
-  def start! #:nodoc: 
+  def start! #:nodoc:
     interrupted = false
-    trap("SIGINT") { interrupted = true } 
+    trap("SIGINT") { interrupted = true }
     begin
       next_urls = @next_urls.pop
       tmp_n_u = {}
@@ -233,7 +233,7 @@ class SpiderInstance
     return false unless @url_checks.map{|url_check|url_check.call(a_url)}.all?
     begin
       unless @robots_seen.include?(u)
-        #open(u, 'User-Agent' => 'Ruby Spider', 
+        #open(u, 'User-Agent' => 'Ruby Spider',
         #  'Accept' => 'text/html,text/xml,application/xml,text/plain', :ssl_verify => false) do |url|
         #  @rules.parse(u, url.read)
         #end
@@ -332,4 +332,3 @@ class SpiderInstance
     end
   end
 end
-
