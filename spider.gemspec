@@ -5,6 +5,7 @@ require File.expand_path('../lib/spider', __FILE__)
 spec = Gem::Specification.new do |s|
   s.author = 'John Nagro'
   s.email = 'john.nagro@gmail.com'
+  s.license = 'MIT'
   s.has_rdoc = true
   s.homepage = 'https://github.com/johnnagro/spider'
   s.name = 'spider'
