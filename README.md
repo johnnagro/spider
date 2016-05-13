@@ -100,7 +100,7 @@ scraping, collecting, and looping so that you can just handle the data._
  end
 ```
 
-###= Store nodes to visit with a custom object
+### Store nodes to visit with a custom object
 
 ```ruby
  require 'spider'
