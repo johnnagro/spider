@@ -151,3 +151,5 @@ scraping, collecting, and looping so that you can just handle the data._
    end
  end
 ```
+
+_Copyright (c) 2007-2016 Spider Team Authors_
