@@ -35,6 +35,7 @@ class SpiderInstance
     @headers     = {}
     @setup       = nil
     @teardown    = nil
+    @interrupted = false
   end
 
   # Add a predicate that determines whether to continue down this URL's path.
@@ -161,8 +162,7 @@ class SpiderInstance
   end
 
   def start! #:nodoc:
-    interrupted = false
-    trap("SIGINT") { interrupted = true }
+    trap("SIGINT") { @interrupted = true }
     begin
       next_urls = @next_urls.pop
       tmp_n_u = {}
@@ -184,10 +184,14 @@ class SpiderInstance
             #exit if interrupted
           end
           @teardown.call(a_url) unless @teardown.nil?
-          exit if interrupted
+          break if @interrupted
         end
       end
-    end while !@next_urls.empty?
+    end while !@next_urls.empty? && !@interrupted
+  end
+
+  def stop! #:nodoc:
+    @interrupted = true
   end
 
   def success_or_failure(code) #:nodoc:
