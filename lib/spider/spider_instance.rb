@@ -123,7 +123,7 @@ class SpiderInstance
   def on(code, p = nil, &block)
     f = p ? p : block
     case code
-    when Fixnum
+    when Integer
       @callbacks[code] = f
     else
       @callbacks[code.to_sym] = f
