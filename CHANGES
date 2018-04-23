@@ -1,3 +1,10 @@
+2018-04-23 v0.5.3
+* release simply to add missing CHANGES notes
+
+2018-04-23 v0.5.2
+* fixed #2 thanks to @jeremyevans
+* added Redis as cache wrapper thanks to @brigriffin
+
 2016-09-04 v0.5.1
 * added the ability to stop a crawl
 
