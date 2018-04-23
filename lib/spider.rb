@@ -4,7 +4,7 @@ require File.dirname(__FILE__)+'/spider/spider_instance'
 # links, and doing it all over again.
 class Spider
 
-  VERSION_INFO = [0, 5, 1] unless defined?(self::VERSION_INFO)
+  VERSION_INFO = [0, 5, 2] unless defined?(self::VERSION_INFO)
   VERSION = VERSION_INFO.map(&:to_s).join('.') unless defined?(self::VERSION)
 
   def self.version
