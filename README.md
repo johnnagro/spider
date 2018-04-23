@@ -72,6 +72,16 @@ scraping, collecting, and looping so that you can just handle the data._
  end
 ```
 
+### Use Redis to track cycles
+
+```ruby
+ require 'spider'
+ require 'spider/included_in_redis'
+ Spider.start_at('http://cashcats.biz/') do |s|
+   s.check_already_seen_with IncludedInRedis.new(host: '127.0.0.1', port: 6379)
+ end
+```
+
 ### Track cycles with a custom object
 
 ```ruby
