@@ -116,7 +116,7 @@ scraping, collecting, and looping so that you can just handle the data._
  require 'spider'
  class MyArray < Array
    def pop
-    super
+     super
    end
 
    def push(a_msg)
