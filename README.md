@@ -116,7 +116,7 @@ scraping, collecting, and looping so that you can just handle the data._
  require 'spider'
  class MyArray < Array
    def pop
-	super
+    super
    end
 
    def push(a_msg)
@@ -150,7 +150,7 @@ scraping, collecting, and looping so that you can just handle the data._
  require 'net/http_configuration'
  require 'spider'
  http_conf = Net::HTTP::Configuration.new(:proxy_host => '7proxies.org',
-                                          :proxy_port => 8881)  
+                                          :proxy_port => 8881)
  http_conf.apply do
    Spider.start_at('http://img.4chan.org/b/') do |s|
      s.on(:success) do |a_url, resp, prior_url|
