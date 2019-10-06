@@ -10,24 +10,23 @@
 #    s.check_already_seen_with IncludedInFile.new('/tmp/crawled.log')
 #  end
 class IncludedInFile
-    # Construct a new IncludedInFile instance.
-    # @param filepath [String] as path of file to store crawled URL
-    def initialize(filepath)
-      @filepath = filepath
-      File.write(@filepath, '') unless File.file?(@filepath)
-    end
-  
-    # Add an item to the memcache.
-    def <<(v)
-      File.write(@filepath, "#{v}\r\n", File.size(@filepath), mode: 'a')
-    end
-  
-    # True if the item is in the file.
-    def include?(v)
-      File.open(@filepath).each do |line|
-        return true if v.to_s == line.chomp
-      end
-      return false
-    end
+  # Construct a new IncludedInFile instance.
+  # @param filepath [String] as path of file to store crawled URL
+  def initialize(filepath)
+    @filepath = filepath
+    # create file if not exists
+    File.write(@filepath, '') unless File.file?(@filepath)
+    @urls = File.readlines(@filepath).map(&:chomp)
   end
-  
+
+  # Add an item to the memcache.
+  def <<(v)
+    @urls << v.to_s
+    File.write(@filepath, "#{v}\r\n", File.size(@filepath), mode: 'a')
+  end
+
+  # True if the item is in the file.
+  def include?(v)
+    @urls.include? v.to_s
+  end
+end
