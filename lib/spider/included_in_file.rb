@@ -19,7 +19,7 @@ class IncludedInFile
     @urls = File.readlines(@filepath).map(&:chomp)
   end
 
-  # Add an item to the memcache.
+  # Add an item to the file & array of URL.
   def <<(v)
     @urls << v.to_s
     File.write(@filepath, "#{v}\r\n", File.size(@filepath), mode: 'a')
