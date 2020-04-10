@@ -9,7 +9,6 @@ spec = Gem::Specification.new do |s|
   s.has_rdoc = true
   s.homepage = 'https://github.com/johnnagro/spider'
   s.name = 'spider'
-  s.rubyforge_project = 'spider'
   s.summary = 'A Web spidering library'
   s.files = Dir['**/*'].delete_if { |f| f =~ /(cvs|gem|svn)$/i }
   s.require_path = 'lib'
