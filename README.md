@@ -172,4 +172,4 @@ scraping, collecting, and looping so that you can just handle the data._
  end
 ```
 
-_Copyright (c) 2007-2016 Spider Team Authors_
+_Copyright (c) 2007-2020 Spider Team Authors_
