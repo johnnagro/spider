@@ -86,7 +86,7 @@ scraping, collecting, and looping so that you can just handle the data._
 
 ```ruby
  require 'spider'
- require 'spider/included_in_redis'
+ require 'spider/included_in_file'
  Spider.start_at('http://cashcats.biz/') do |s|
    s.check_already_seen_with IncludedInFile.new('/tmp/cashcats_crawl.txt')
  end
