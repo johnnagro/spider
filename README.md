@@ -82,6 +82,16 @@ scraping, collecting, and looping so that you can just handle the data._
  end
 ```
 
+### Use Plain text to track cycles
+
+```ruby
+ require 'spider'
+ require 'spider/included_in_redis'
+ Spider.start_at('http://cashcats.biz/') do |s|
+   s.check_already_seen_with IncludedInFile.new('/tmp/cashcats_crawl.txt')
+ end
+```
+
 ### Track cycles with a custom object
 
 ```ruby
