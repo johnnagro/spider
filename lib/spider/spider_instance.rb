@@ -260,6 +260,14 @@ class SpiderInstance
   end
 
   def generate_next_urls(a_url, resp) #:nodoc:
+    # Only scan for links if the content-type is HTML or the URL ends with .html
+    content_type = resp['Content-Type'] || resp['content-type'] || ''
+    url_ends_with_html = a_url.downcase.end_with?('.html')
+    
+    unless content_type.downcase.include?('text/html') || url_ends_with_html
+      return []
+    end
+    
     web_page = resp.body
     base_url = (web_page.scan(/base\s+href="(.*?)"/i).flatten +
                 [a_url[0,a_url.rindex('/')]])[0]

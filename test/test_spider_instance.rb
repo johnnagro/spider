@@ -297,8 +297,6 @@ class TestSpiderInstance < Minitest::Test
     assert @proc_called
   end
 
-  private
-
   def callback_arguments_on(code)
     si = SpiderInstance.new('http://localhost:8888/prior' => ['http://localhost:8888/'])
     si.on(code) do |a_url, resp, prior_url|
@@ -317,5 +315,113 @@ class TestSpiderInstance < Minitest::Test
       si.check_already_seen_with cacher
       si.start!
     end
+  end
+
+  def test_should_extract_links_from_html_content_type
+    @urls_found = []
+    with_web_server(HtmlWithLinksServlet) do
+      si = SpiderInstance.new(nil => ['http://localhost:8888/'])
+      si.on(:success) do |url, resp, prior_url|
+        @urls_found << url
+      end
+      si.start!
+    end
+    # Should find the original page and the extracted links
+    assert @urls_found.length > 1, "Should extract links from HTML content"
+    assert @urls_found.any? { |url| url.include?('/page1') }, "Should extract /page1 link"
+    assert @urls_found.any? { |url| url.include?('/page2') }, "Should extract /page2 link"
+  end
+
+  def test_should_not_extract_links_from_json_content_type
+    @urls_found = []
+    with_web_server(JsonServlet) do
+      si = SpiderInstance.new(nil => ['http://localhost:8888/'])
+      si.on(:success) do |url, resp, prior_url|
+        @urls_found << url
+      end
+      si.start!
+    end
+    # Should only find the original page, no extracted links
+    assert_equal 1, @urls_found.length, "Should not extract links from JSON content"
+    assert_equal 'http://localhost:8888/', @urls_found.first
+  end
+
+  def test_should_not_extract_links_from_plain_text_content_type
+    @urls_found = []
+    with_web_server(PlainTextServlet) do
+      si = SpiderInstance.new(nil => ['http://localhost:8888/'])
+      si.on(:success) do |url, resp, prior_url|
+        @urls_found << url
+      end
+      si.start!
+    end
+    # Should only find the original page, no extracted links
+    assert_equal 1, @urls_found.length, "Should not extract links from plain text content"
+    assert_equal 'http://localhost:8888/', @urls_found.first
+  end
+
+  def test_should_extract_links_from_html_file_extension
+    @urls_found = []
+    # Test with a URL ending in .html but no content-type header
+    with_web_server(NoContentTypeServlet) do
+      si = SpiderInstance.new(nil => ['http://localhost:8888/test.html'])
+      si.on(:success) do |url, resp, prior_url|
+        @urls_found << url
+      end
+      si.start!
+    end
+    # Should extract links because URL ends with .html
+    assert @urls_found.length > 1, "Should extract links from .html files even without content-type"
+    assert @urls_found.any? { |url| url.include?('/nocontenttype') }, "Should extract the link"
+  end
+
+  def test_should_not_extract_links_without_html_content_type_or_extension
+    @urls_found = []
+    # Test with a URL not ending in .html and no HTML content-type header
+    with_web_server(NoContentTypeServlet) do
+      si = SpiderInstance.new(nil => ['http://localhost:8888/api/data'])
+      si.on(:success) do |url, resp, prior_url|
+        @urls_found << url
+      end
+      si.start!
+    end
+    # Should not extract links
+    assert_equal 1, @urls_found.length, "Should not extract links without HTML content-type or .html extension"
+    assert_equal 'http://localhost:8888/api/data', @urls_found.first
+  end
+
+  def test_generate_next_urls_directly_with_html_content
+    si = SpiderInstance.new({nil => []})
+    
+    # Mock an HTTP response with HTML content type
+    response = Object.new
+    def response.body
+      '<html><body><a href="/direct-test">Direct Test</a></body></html>'
+    end
+    def response.[](key)
+      return 'text/html; charset=utf-8' if key == 'Content-Type' || key == 'content-type'
+      nil
+    end
+    
+    urls = si.generate_next_urls('http://example.com/', response)
+    assert urls.length > 0, "Should extract URLs from HTML content"
+    assert urls.any? { |url| url.include?('/direct-test') }, "Should extract the test link"
+  end
+
+  def test_generate_next_urls_directly_with_non_html_content
+    si = SpiderInstance.new({nil => []})
+    
+    # Mock an HTTP response with non-HTML content type
+    response = Object.new
+    def response.body
+      '{"links": "<a href=\"/should-not-extract\">Link</a>"}'
+    end
+    def response.[](key)
+      return 'application/json' if key == 'Content-Type' || key == 'content-type'
+      nil
+    end
+    
+    urls = si.generate_next_urls('http://example.com/api', response)
+    assert_equal 0, urls.length, "Should not extract URLs from non-HTML content"
   end
 end

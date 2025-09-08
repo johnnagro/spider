@@ -81,6 +81,47 @@ class SuccessServlet < WEBrick::HTTPServlet::AbstractServlet
   end
 end
 
+class JsonServlet < WEBrick::HTTPServlet::AbstractServlet
+  def do_GET(req, res)
+    res.status = 200
+    res['Content-type'] = 'application/json'
+    res.body = '{"data": "<a href=\"/test\">Test Link</a>", "message": "This should not extract links"}'
+  end
+end
+
+class PlainTextServlet < WEBrick::HTTPServlet::AbstractServlet
+  def do_GET(req, res)
+    res.status = 200
+    res['Content-type'] = 'text/plain'
+    res.body = "Plain text content with <a href=\"/test\">fake link</a> that should not be extracted"
+  end
+end
+
+class HtmlWithLinksServlet < WEBrick::HTTPServlet::AbstractServlet
+  def do_GET(req, res)
+    res.status = 200
+    res['Content-type'] = 'text/html'
+    res.body = <<-HTML
+      <html>
+        <head><title>Test Page</title></head>
+        <body>
+          <a href="/page1">Page 1</a>
+          <a href="/page2">Page 2</a>
+          <a href="http://external.com/page">External</a>
+        </body>
+      </html>
+    HTML
+  end
+end
+
+class NoContentTypeServlet < WEBrick::HTTPServlet::AbstractServlet
+  def do_GET(req, res)
+    res.status = 200
+    # No content-type header set
+    res.body = '<html><body><a href="/nocontenttype">Link</a></body></html>'
+  end
+end
+
 def null_logger
   logger = Object.new
   def logger.method_missing(method, *args, &block)
