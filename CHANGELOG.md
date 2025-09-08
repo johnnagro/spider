@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - updates to gemspec such as minimum ruby version
 - markdown format changelog
+- rebuilt test suite with Minitest
+- mock memcached and redis-server for testing
+
+### Fixed
+- better handling of port numbers
+- better handling of status codes
 
 ## [0.5.3] - 2018-04-23
 * release simply to add missing CHANGES notes

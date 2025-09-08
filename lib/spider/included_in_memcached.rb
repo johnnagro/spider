@@ -1,6 +1,6 @@
 # Use memcached to track cycles.
 
-require 'memcache'
+require 'dalli'
 
 # A specialized class using memcached to track items stored. It supports
 # three operations: new, <<, and include? . Together these can be used to
@@ -12,10 +12,11 @@ require 'memcache'
 #    s.check_already_seen_with IncludedInMemcached.new('localhost:11211')
 #  end
 class IncludedInMemcached
-  # Construct a new IncludedInMemcached instance. All arguments here are
-  # passed to MemCache (part of the memcache-client gem).
-  def initialize(*a)
-    @c = MemCache.new(*a)
+  # Construct a new IncludedInMemcached instance. The first argument should be
+  # the memcached server address (e.g., 'localhost:11211'). Additional options
+  # can be passed as a hash (see Dalli::Client documentation).
+  def initialize(server, options = {})
+    @c = Dalli::Client.new(server, options)
   end
 
   # Add an item to the memcache.

@@ -165,7 +165,6 @@ class SpiderInstance
     trap("SIGINT") { @interrupted = true }
     begin
       next_urls = @next_urls.pop
-      tmp_n_u = {}
       next_urls.each do |prior_url, urls|
         urls = [urls] unless urls.kind_of?(Array)
         urls.map do |a_url|
@@ -176,12 +175,9 @@ class SpiderInstance
           @setup.call(a_url) unless @setup.nil?
           get_page(parsed_url) do |response|
             do_callbacks(a_url, response, prior_url)
-            #tmp_n_u[a_url] = generate_next_urls(a_url, response)
-            #@next_urls.push tmp_n_u
             generate_next_urls(a_url, response).each do |a_next_url|
               @next_urls.push a_url => a_next_url
             end
-            #exit if interrupted
           end
           @teardown.call(a_url) unless @teardown.nil?
           break if @interrupted
@@ -256,7 +252,7 @@ class SpiderInstance
   def do_callbacks(a_url, resp, prior_url) #:nodoc:
     cbs = [@callbacks[:every],
       resp.success? ?  @callbacks[:success] : @callbacks[:failure],
-      @callbacks[resp.code]]
+      @callbacks[resp.code.to_i]]
 
     cbs.each do |cb|
       cb.call(a_url, resp, prior_url) if cb
@@ -287,14 +283,16 @@ class SpiderInstance
     case parsed_additional_url.scheme
       when nil
         u = base_url.is_a?(URI) ? base_url : URI.parse(base_url)
+        # Include port if it's not the default port
+        port_part = (u.port && ((u.scheme == 'http' && u.port != 80) || (u.scheme == 'https' && u.port != 443))) ? ":#{u.port}" : ""
         if additional_url[0].chr == '/'
-          "#{u.scheme}://#{u.host}#{additional_url}"
+          "#{u.scheme}://#{u.host}#{port_part}#{additional_url}"
         elsif u.path.nil? || u.path == ''
-          "#{u.scheme}://#{u.host}/#{additional_url}"
+          "#{u.scheme}://#{u.host}#{port_part}/#{additional_url}"
         elsif u.path[0].chr == '/'
-          "#{u.scheme}://#{u.host}#{u.path}/#{additional_url}"
+          "#{u.scheme}://#{u.host}#{port_part}#{u.path}/#{additional_url}"
         else
-          "#{u.scheme}://#{u.host}/#{u.path}/#{additional_url}"
+          "#{u.scheme}://#{u.host}#{port_part}/#{u.path}/#{additional_url}"
         end
     else
       additional_url

@@ -7,3 +7,5 @@
 /pkg
 /rdoc
 /.yardoc
+dump.rdb
+.tool-versions

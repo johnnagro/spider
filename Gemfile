@@ -7,8 +7,10 @@ gemspec
 
 group :development, :test do
   gem "rake", "~> 13.0"
-  gem "rspec", "~> 3.0"
+  gem "minitest", "~> 5.0"
   gem "webrick", "~> 1.9"
+  gem "dalli", "~> 3.2"
+  gem "redis", "~> 5.4"
 end
 
 group :development do
