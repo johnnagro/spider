@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - more efficient URL scanning, skipping non-html content. thanks to @apfeltee
+- honor "nofollow" link `rel` attributes. thanks to @strzibny
 
 ## [0.6.0] - 2025-09-08
 

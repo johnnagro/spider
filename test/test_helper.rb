@@ -122,6 +122,28 @@ class NoContentTypeServlet < WEBrick::HTTPServlet::AbstractServlet
   end
 end
 
+class RelAttributeServlet < WEBrick::HTTPServlet::AbstractServlet
+  def do_GET(req, res)
+    res.status = 200
+    res['Content-type'] = 'text/html'
+    res.body = <<-HTML
+      <html>
+        <head><title>Rel Attribute Test</title></head>
+        <body>
+          <a href="/normal-link">Normal Link</a>
+          <a href="/nofollow-link" rel="nofollow">NoFollow Link</a>
+          <a href="/sponsored-link" rel="sponsored">Sponsored Link</a>
+          <a href="/ugc-link" rel="ugc">UGC Link</a>
+          <a href="/multiple-rel" rel="nofollow sponsored">Multiple Rel</a>
+          <a href="/mixed-case" rel="NoFollow">Mixed Case</a>
+          <a href="/with-spaces" rel=" nofollow ">With Spaces</a>
+          <a href="/other-rel" rel="bookmark">Other Rel</a>
+        </body>
+      </html>
+    HTML
+  end
+end
+
 def null_logger
   logger = Object.new
   def logger.method_missing(method, *args, &block)

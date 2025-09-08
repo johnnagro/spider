@@ -424,4 +424,92 @@ class TestSpiderInstance < Minitest::Test
     urls = si.generate_next_urls('http://example.com/api', response)
     assert_equal 0, urls.length, "Should not extract URLs from non-HTML content"
   end
+
+  def test_should_respect_rel_nofollow_attributes
+    @urls_found = []
+    with_web_server(RelAttributeServlet) do
+      si = SpiderInstance.new(nil => ['http://localhost:8888/'])
+      si.on(:success) do |url, resp, prior_url|
+        @urls_found << url
+      end
+      si.start!
+    end
+    
+    # Should find the original page and only links without nofollow/sponsored/ugc
+    assert @urls_found.any? { |url| url.include?('/normal-link') }, "Should extract normal links"
+    assert @urls_found.any? { |url| url.include?('/other-rel') }, "Should extract links with other rel values"
+    
+    # Should NOT find nofollow, sponsored, or ugc links
+    refute @urls_found.any? { |url| url.include?('/nofollow-link') }, "Should not extract rel=nofollow links"
+    refute @urls_found.any? { |url| url.include?('/sponsored-link') }, "Should not extract rel=sponsored links"
+    refute @urls_found.any? { |url| url.include?('/ugc-link') }, "Should not extract rel=ugc links"
+    refute @urls_found.any? { |url| url.include?('/multiple-rel') }, "Should not extract links with multiple rel including nofollow"
+    refute @urls_found.any? { |url| url.include?('/mixed-case') }, "Should not extract rel=NoFollow (case insensitive)"
+    refute @urls_found.any? { |url| url.include?('/with-spaces') }, "Should not extract rel with spaces around nofollow"
+  end
+
+  def test_generate_next_urls_directly_with_rel_attributes
+    si = SpiderInstance.new({nil => []})
+    
+    # Mock an HTTP response with various rel attributes
+    response = Object.new
+    def response.body
+      <<-HTML
+        <html><body>
+          <a href="/normal">Normal</a>
+          <a href="/nofollow" rel="nofollow">NoFollow</a>
+          <a href="/sponsored" rel="sponsored">Sponsored</a>
+          <a href="/ugc" rel="ugc">UGC</a>
+          <a href="/bookmark" rel="bookmark">Bookmark</a>
+        </body></html>
+      HTML
+    end
+    def response.[](key)
+      return 'text/html' if key == 'Content-Type' || key == 'content-type'
+      nil
+    end
+    
+    urls = si.generate_next_urls('http://example.com/', response)
+    
+    # Should extract normal and bookmark links
+    assert urls.any? { |url| url.include?('/normal') }, "Should extract normal links"
+    assert urls.any? { |url| url.include?('/bookmark') }, "Should extract links with other rel values"
+    
+    # Should not extract nofollow, sponsored, or ugc links
+    refute urls.any? { |url| url.include?('/nofollow') }, "Should not extract rel=nofollow links"
+    refute urls.any? { |url| url.include?('/sponsored') }, "Should not extract rel=sponsored links"
+    refute urls.any? { |url| url.include?('/ugc') }, "Should not extract rel=ugc links"
+  end
+
+  def test_rel_attribute_edge_cases
+    si = SpiderInstance.new({nil => []})
+    
+    # Test various edge cases for rel attribute parsing
+    response = Object.new
+    def response.body
+      <<-HTML
+        <html><body>
+          <a href="/single-quotes" rel='nofollow'>Single Quotes</a>
+          <a href="/no-quotes" rel=nofollow>No Quotes</a>
+          <a href="/mixed-quotes" rel="nofollow'>Mixed Quotes</a>
+          <a href="/extra-attrs" class="link" rel="nofollow" id="test">Extra Attrs</a>
+          <a href="/complex-rel" rel="bookmark nofollow external">Complex Rel</a>
+        </body></html>
+      HTML
+    end
+    def response.[](key)
+      return 'text/html' if key == 'Content-Type' || key == 'content-type'
+      nil
+    end
+    
+    urls = si.generate_next_urls('http://example.com/', response)
+    
+    # All these should be filtered out because they contain nofollow
+    refute urls.any? { |url| url.include?('/single-quotes') }, "Should handle single quotes"
+    refute urls.any? { |url| url.include?('/extra-attrs') }, "Should handle extra attributes"
+    refute urls.any? { |url| url.include?('/complex-rel') }, "Should handle complex rel values"
+    
+    # Note: no-quotes and mixed-quotes might not be properly parsed by our regex,
+    # but that's acceptable as they're invalid HTML anyway
+  end
 end

@@ -272,7 +272,22 @@ class SpiderInstance
     base_url = (web_page.scan(/base\s+href="(.*?)"/i).flatten +
                 [a_url[0,a_url.rindex('/')]])[0]
     base_url = remove_trailing_slash(base_url)
-    web_page.scan(/href="(.*?)"/i).flatten.map do |link|
+    
+    # Extract anchor tags with href attributes, respecting rel="nofollow"
+    web_page.scan(/<a\s[^>]*href="([^"]*)"[^>]*>/i).flatten.map do |link|
+      # Get the full anchor tag to check for rel attribute
+      anchor_match = web_page.match(/<a\s[^>]*href="#{Regexp.escape(link)}"[^>]*>/i)
+      next nil unless anchor_match
+      
+      anchor_tag = anchor_match[0]
+      
+      # Check if this link has rel="nofollow" or similar attributes that should be respected
+      if anchor_tag.match(/rel\s*=\s*["']([^"']*nofollow[^"']*)["']/i) ||
+         anchor_tag.match(/rel\s*=\s*["']([^"']*sponsored[^"']*)["']/i) ||
+         anchor_tag.match(/rel\s*=\s*["']([^"']*ugc[^"']*)["']/i)
+        next nil  # Skip links with nofollow, sponsored, or ugc rel attributes
+      end
+      
       begin
         parsed_link = URI.parse(link)
         if parsed_link.fragment == '#'
