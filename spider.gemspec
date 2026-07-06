@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.5'
   s.name = 'spider'
   s.summary = 'A Web spidering library'
-  s.files = Dir['lib/**/*'] + ['VERSION']
+  s.files = Dir['lib/**/*'] + [ 'VERSION' ]
   s.require_path = 'lib'
   s.description = <<-EOF
 A Web spidering library: handles robots.txt, scraping, finding more

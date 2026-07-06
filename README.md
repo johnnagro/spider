@@ -48,6 +48,19 @@ scraping, collecting, and looping so that you can just handle the data._
  end
 ```
 
+### Be polite and cap the crawl
+
+```ruby
+ require 'spider'
+ Spider.start_at('http://cashcats.biz/') do |s|
+   # Wait one second before each request.
+   s.crawl_delay = 1
+
+   # Stop after fetching 100 pages.
+   s.max_urls = 100
+ end
+```
+
 ### Pass headers to some requests
 
 ```ruby

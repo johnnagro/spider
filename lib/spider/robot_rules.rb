@@ -11,13 +11,13 @@ require "uri"
 
 # Based on Perl's WWW::RobotRules module, by Gisle Aas.
 class RobotRules
-   def initialize( user_agent )
+   def initialize(user_agent)
      @user_agent = user_agent.scan(/\S+/).first.sub(%r{/.*},
 "").downcase
      @rules      = Hash.new { |rules, rule| rules[rule] = Array.new }
    end
 
-   def parse( text_uri, robots_data )
+   def parse(text_uri, robots_data)
      uri      = URI.parse(text_uri)
      location = "#{uri.host}:#{uri.port}"
      @rules.delete(location)
@@ -69,12 +69,12 @@ uri.scheme
      end
    end
 
-   def allowed?( text_uri )
+   def allowed?(text_uri)
      uri      = URI.parse(text_uri)
      location = "#{uri.host}:#{uri.port}"
      path     = uri.path
 
-     return true unless %w{http https}.include?(uri.scheme)
+     return true unless %w[http https].include?(uri.scheme)
 
      not @rules[location].any? { |rule| path.index(rule) == 0 }
    end

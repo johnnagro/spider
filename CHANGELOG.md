@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-07-05
+
+### Added
+- `crawl_delay` option to wait a configurable number of seconds before each request
+- `max_urls` option to stop the crawl after a set number of pages
+
+### Changed
+- `construct_complete_url` now resolves relative links via `URI.join` (RFC 3986), correctly handling `../`, query-only, and fragment links
+- link extraction in `generate_next_urls` rewritten as a single pass, removing the per-link full-document rescan
+- adopted [rubocop-rails-omakase](https://github.com/rails/rubocop-rails-omakase) styling
+
+### Removed
+- global `NilClass#merge` monkey-patch
+
+### Fixed
+- narrowed a broad `rescue Exception` to `StandardError` so signals and fatal errors are no longer swallowed
+
 ## [0.7.0] - 2025-09-08
 
 ### Added

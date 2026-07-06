@@ -1,11 +1,10 @@
-require File.dirname(__FILE__)+'/spider/spider_instance'
+require File.dirname(__FILE__)+"/spider/spider_instance"
 
 # A spidering library for Ruby. Handles robots.txt, scraping, finding more
 # links, and doing it all over again.
 class Spider
-
   VERSION = File.read(
-    File.expand_path('../VERSION', __dir__)
+    File.expand_path("../VERSION", __dir__)
   ).strip.freeze
 
   def self.version
@@ -22,6 +21,12 @@ class Spider
   #      a_url =~ %r{^http://cashcats.biz.*}
   #    end
   #
+  #    # Be polite: wait one second between requests.
+  #    s.crawl_delay = 1
+  #
+  #    # Stop after fetching 100 pages.
+  #    s.max_urls = 100
+  #
   #    s.on 404 do |a_url, resp, prior_url|
   #      puts "URL not found: #{a_url}"
   #    end
@@ -37,7 +42,7 @@ class Spider
 
   def self.start_at(a_url, &block)
     rules    = RobotRules.new("Ruby Spider #{Spider::VERSION}")
-    a_spider = SpiderInstance.new({nil => [a_url]}, [], rules, [])
+    a_spider = SpiderInstance.new({ nil => [ a_url ] }, [], rules, [])
     block.call(a_spider)
     a_spider.start!
   end

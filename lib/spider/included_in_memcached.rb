@@ -1,6 +1,6 @@
 # Use memcached to track cycles.
 
-require 'dalli'
+require "dalli"
 
 # A specialized class using memcached to track items stored. It supports
 # three operations: new, <<, and include? . Together these can be used to

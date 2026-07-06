@@ -1,5 +1,4 @@
-Style/Documentation:
-  Enabled: false
+inherit_gem:
+  rubocop-rails-omakase: rubocop.yml
 
-Metrics/LineLength:
-  Max: 200
+# Project-specific overrides go here

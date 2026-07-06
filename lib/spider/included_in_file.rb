@@ -15,14 +15,14 @@ class IncludedInFile
   def initialize(filepath)
     @filepath = filepath
     # create file if not exists
-    File.write(@filepath, '') unless File.file?(@filepath)
+    File.write(@filepath, "") unless File.file?(@filepath)
     @urls = File.readlines(@filepath).map(&:chomp)
   end
 
   # Add an item to the file & array of URL.
   def <<(v)
     @urls << v.to_s
-    File.write(@filepath, "#{v}\r\n", File.size(@filepath), mode: 'a')
+    File.write(@filepath, "#{v}\r\n", File.size(@filepath), mode: "a")
   end
 
   # True if the item is in the file.

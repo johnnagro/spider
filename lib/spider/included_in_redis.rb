@@ -1,7 +1,7 @@
 # Use Redis to track cycles.
 
-require 'redis'
-require 'json'
+require "redis"
+require "json"
 
 # A specialized class using Redis to track items stored. It supports
 # three operations: new, <<, and include? . Together these can be used to

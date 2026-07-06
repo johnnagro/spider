@@ -16,4 +16,5 @@ end
 group :development do
   gem "bundler", "~> 2.0"
   gem "pry", "~> 0.14"
+  gem "rubocop-rails-omakase", require: false
 end

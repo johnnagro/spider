@@ -1,8 +1,8 @@
 # Use AmazonSQS to track nodes to visit.
 
-require 'rubygems'
-require 'right_aws'
-require 'yaml'
+require "rubygems"
+require "right_aws"
+require "yaml"
 
 # A specialized class using AmazonSQS to track nodes to walk. It supports
 # two operations: push and pop . Together these can be used to
@@ -20,7 +20,7 @@ class NextUrlsInSQS
   # Construct a new NextUrlsInSQS instance. All arguments here are
   # passed to RightAWS::SqsGen2 (part of the right_aws gem) or used
   # to set the AmazonSQS queue name (optional).
-  def initialize(aws_access_key, aws_secret_access_key, queue_name = 'ruby-spider')
+  def initialize(aws_access_key, aws_secret_access_key, queue_name = "ruby-spider")
     @sqs = RightAws::SqsGen2.new(aws_access_key, aws_secret_access_key)
     @queue = @sqs.queue(queue_name)
   end
@@ -30,14 +30,14 @@ class NextUrlsInSQS
   def pop
     while true
       message = @queue.pop
-      return YAML::load(message.to_s) unless message.nil?
+      return YAML.load(message.to_s) unless message.nil?
       sleep 5
     end
   end
 
   # Put data on the queue. Data is encoded with YAML.
   def push(a_msg)
-    encoded_message = YAML::dump(a_msg)
+    encoded_message = YAML.dump(a_msg)
     @queue.push(a_msg)
   end
 end

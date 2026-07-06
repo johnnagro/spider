@@ -1,5 +1,5 @@
-require_relative 'test_helper'
-local_require 'spider'
+require_relative "test_helper"
+local_require "spider"
 
 class TestSpider < Minitest::Test
   def test_should_find_two_pages_without_cycles_using_defaults
@@ -15,8 +15,8 @@ class TestSpider < Minitest::Test
     with_web_server(LoopingServlet) do
       with_memcached do
         # Use mock memcached for fast, reliable testing
-        memcached_client = MockIncludedInMemcached.new('localhost:11211')
-        
+        memcached_client = MockIncludedInMemcached.new("localhost:11211")
+
         u = find_pages_with_static_server do |s|
           s.check_already_seen_with memcached_client
         end
@@ -29,9 +29,9 @@ class TestSpider < Minitest::Test
 
   def find_pages_with_static_server(&block)
     pages = []
-    Spider.start_at('http://localhost:8888/') do |s|
+    Spider.start_at("http://localhost:8888/") do |s|
       block.call(s) unless block.nil?
-      s.on(:every){ |u,r,p| pages << u }
+      s.on(:every) { |u, r, p| pages << u }
     end
     pages
   end

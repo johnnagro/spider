@@ -1,41 +1,51 @@
 # Specialized spidering rules.
 
-require File.dirname(__FILE__)+'/robot_rules.rb'
-require 'open-uri'
-require 'uri'
-require 'net/http'
-require 'net/https'
+require File.dirname(__FILE__)+"/robot_rules.rb"
+require "open-uri"
+require "uri"
+require "net/http"
+require "net/https"
 
-module Net #:nodoc:
-  class HTTPResponse #:nodoc:
+module Net # :nodoc:
+  class HTTPResponse # :nodoc:
     def success?; false; end
     def redirect?; false; end
   end
-  class HTTPSuccess #:nodoc:
+  class HTTPSuccess # :nodoc:
     def success?; true; end
   end
-  class HTTPRedirection #:nodoc:
+  class HTTPRedirection # :nodoc:
     def redirect?; true; end
   end
 end
 
-class NilClass #:nodoc:
-  def merge(h); h; end
-end
-
 class SpiderInstance
-  def initialize(next_urls, seen = [], rules = nil, robots_seen = []) #:nodoc:
-    @url_checks  = []
-    @cache       = :memory
-    @callbacks   = {}
-    @next_urls   = [next_urls]
-    @seen        = seen
-    @rules       = rules || RobotRules.new("Ruby Spider #{Spider::VERSION}")
-    @robots_seen = robots_seen
-    @headers     = {}
-    @setup       = nil
-    @teardown    = nil
-    @interrupted = false
+  # Matches an anchor tag's attribute string carrying a rel value that should
+  # not be followed (nofollow, sponsored, or ugc), regardless of quoting.
+  NOFOLLOW_REL = /rel\s*=\s*["']?[^"'>]*\b(?:nofollow|sponsored|ugc)\b/i
+
+  # Seconds to wait before each HTTP request. Use to be polite to servers.
+  #  s.crawl_delay = 1
+  #
+  # Maximum number of pages to fetch before stopping. nil means no limit.
+  #  s.max_urls = 100
+  attr_writer :crawl_delay, :max_urls
+
+  def initialize(next_urls, seen = [], rules = nil, robots_seen = []) # :nodoc:
+    @url_checks   = []
+    @cache        = :memory
+    @callbacks    = {}
+    @next_urls    = [ next_urls ]
+    @seen         = seen
+    @rules        = rules || RobotRules.new("Ruby Spider #{Spider::VERSION}")
+    @robots_seen  = robots_seen
+    @headers      = {}
+    @setup        = nil
+    @teardown     = nil
+    @interrupted  = false
+    @crawl_delay  = 0
+    @max_urls     = nil
+    @urls_fetched = 0
   end
 
   # Add a predicate that determines whether to continue down this URL's path.
@@ -70,7 +80,7 @@ class SpiderInstance
     if cacher.respond_to?(:<<) && cacher.respond_to?(:include?)
       @seen = cacher
     else
-      raise ArgumentError, 'expected something that responds to << and included?'
+      raise ArgumentError, "expected something that responds to << and included?"
     end
   end
 
@@ -149,10 +159,10 @@ class SpiderInstance
     HeaderSetter.new(self)
   end
 
-  def raw_headers #:nodoc:
+  def raw_headers # :nodoc:
     @headers
   end
-  def raw_headers=(v) #:nodoc:
+  def raw_headers=(v) # :nodoc:
     @headers = v
   end
 
@@ -161,14 +171,14 @@ class SpiderInstance
     @headers = {}
   end
 
-  def start! #:nodoc:
+  def start! # :nodoc:
     trap("SIGINT") { @interrupted = true }
     begin
       next_urls = @next_urls.pop
       next_urls.each do |prior_url, urls|
-        urls = [urls] unless urls.kind_of?(Array)
+        urls = [ urls ] unless urls.kind_of?(Array)
         urls.map do |a_url|
-          [a_url, (URI.parse(a_url) rescue nil)]
+          [ a_url, (URI.parse(a_url) rescue nil) ]
         end.select do |a_url, parsed_url|
           allowable_url?(a_url, parsed_url)
         end.each do |a_url, parsed_url|
@@ -180,17 +190,18 @@ class SpiderInstance
             end
           end
           @teardown.call(a_url) unless @teardown.nil?
+          @interrupted = true if @max_urls && @urls_fetched >= @max_urls
           break if @interrupted
         end
       end
     end while !@next_urls.empty? && !@interrupted
   end
 
-  def stop! #:nodoc:
+  def stop! # :nodoc:
     @interrupted = true
   end
 
-  def success_or_failure(code) #:nodoc:
+  def success_or_failure(code) # :nodoc:
     if code > 199 && code < 300
       :success
     else
@@ -198,23 +209,23 @@ class SpiderInstance
     end
   end
 
-  def allowable_url?(a_url, parsed_url) #:nodoc:
+  def allowable_url?(a_url, parsed_url) # :nodoc:
     !parsed_url.nil? && !@seen.include?(parsed_url) && allowed?(a_url, parsed_url) &&
-      @url_checks.map{|url_check|url_check.call(a_url)}.all?
+      @url_checks.map { |url_check|url_check.call(a_url) }.all?
   end
 
   # True if the robots.txt for that URL allows access to it.
   def allowed?(a_url, parsed_url) # :nodoc:
-    return false unless ['http','https'].include?(parsed_url.scheme)
+    return false unless [ "http", "https" ].include?(parsed_url.scheme)
     u = "#{parsed_url.scheme}://#{parsed_url.host}:#{parsed_url.port}/robots.txt"
     parsed_u = URI.parse(u)
-    return false unless @url_checks.map{|url_check|url_check.call(a_url)}.all?
+    return false unless @url_checks.map { |url_check|url_check.call(a_url) }.all?
     begin
       unless @robots_seen.include?(u)
-        #open(u, 'User-Agent' => 'Ruby Spider',
+        # open(u, 'User-Agent' => 'Ruby Spider',
         #  'Accept' => 'text/html,text/xml,application/xml,text/plain', :ssl_verify => false) do |url|
         #  @rules.parse(u, url.read)
-        #end
+        # end
         get_page(parsed_u) do |r|
           @rules.parse(u, r.body)
         end
@@ -223,24 +234,26 @@ class SpiderInstance
       @rules.allowed?(a_url)
     rescue OpenURI::HTTPError
       true # No robots.txt
-    rescue Exception, Timeout::Error # to keep it from crashing
+    rescue StandardError, Timeout::Error # to keep it from crashing
       false
     end
   end
 
-  def get_page(parsed_url, &block) #:nodoc:
+  def get_page(parsed_url, &block) # :nodoc:
     @seen << parsed_url
     begin
+      sleep @crawl_delay if @crawl_delay && @crawl_delay > 0
       http = Net::HTTP.new(parsed_url.host, parsed_url.port)
-      if parsed_url.scheme == 'https'
+      if parsed_url.scheme == "https"
         http.use_ssl = true
         http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       end
       # Uses start because http.finish cannot be called.
-      r = http.start {|h| h.request(Net::HTTP::Get.new(parsed_url.request_uri, @headers))}
+      r = http.start { |h| h.request(Net::HTTP::Get.new(parsed_url.request_uri, @headers)) }
       if r.redirect?
-        get_page(URI.parse(construct_complete_url(parsed_url,r['Location'])), &block)
+        get_page(URI.parse(construct_complete_url(parsed_url, r["Location"])), &block)
       else
+        @urls_fetched += 1
         block.call(r)
       end
     rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError => e
@@ -249,89 +262,62 @@ class SpiderInstance
     end
   end
 
-  def do_callbacks(a_url, resp, prior_url) #:nodoc:
-    cbs = [@callbacks[:every],
+  def do_callbacks(a_url, resp, prior_url) # :nodoc:
+    cbs = [ @callbacks[:every],
       resp.success? ?  @callbacks[:success] : @callbacks[:failure],
-      @callbacks[resp.code.to_i]]
+      @callbacks[resp.code.to_i] ]
 
     cbs.each do |cb|
       cb.call(a_url, resp, prior_url) if cb
     end
   end
 
-  def generate_next_urls(a_url, resp) #:nodoc:
+  def generate_next_urls(a_url, resp) # :nodoc:
     # Only scan for links if the content-type is HTML or the URL ends with .html
-    content_type = resp['Content-Type'] || resp['content-type'] || ''
-    url_ends_with_html = a_url.downcase.end_with?('.html')
-    
-    unless content_type.downcase.include?('text/html') || url_ends_with_html
+    content_type = resp["Content-Type"] || resp["content-type"] || ""
+    url_ends_with_html = a_url.downcase.end_with?(".html")
+
+    unless content_type.downcase.include?("text/html") || url_ends_with_html
       return []
     end
-    
+
     web_page = resp.body
-    base_url = (web_page.scan(/base\s+href="(.*?)"/i).flatten +
-                [a_url[0,a_url.rindex('/')]])[0]
-    base_url = remove_trailing_slash(base_url)
-    
-    # Extract anchor tags with href attributes, respecting rel="nofollow"
-    web_page.scan(/<a\s[^>]*href="([^"]*)"[^>]*>/i).flatten.map do |link|
-      # Get the full anchor tag to check for rel attribute
-      anchor_match = web_page.match(/<a\s[^>]*href="#{Regexp.escape(link)}"[^>]*>/i)
-      next nil unless anchor_match
-      
-      anchor_tag = anchor_match[0]
-      
-      # Check if this link has rel="nofollow" or similar attributes that should be respected
-      if anchor_tag.match(/rel\s*=\s*["']([^"']*nofollow[^"']*)["']/i) ||
-         anchor_tag.match(/rel\s*=\s*["']([^"']*sponsored[^"']*)["']/i) ||
-         anchor_tag.match(/rel\s*=\s*["']([^"']*ugc[^"']*)["']/i)
-        next nil  # Skip links with nofollow, sponsored, or ugc rel attributes
-      end
-      
+    base_url = (web_page.scan(/base\s+href="(.*?)"/i).flatten + [ a_url ])[0]
+
+    # Extract each anchor tag once, then pull href and rel from the same tag,
+    # respecting rel="nofollow"/"sponsored"/"ugc".
+    web_page.scan(/<a\s([^>]*)>/i).flatten.map do |attrs|
+      next nil if attrs =~ NOFOLLOW_REL
+
+      href = attrs[/href\s*=\s*"([^"]*)"/i, 1]
+      next nil if href.nil? || href.empty?
+
       begin
-        parsed_link = URI.parse(link)
-        if parsed_link.fragment == '#'
+        parsed_link = URI.parse(href)
+        if parsed_link.fragment == "#"
           nil
         else
-          construct_complete_url(base_url, link, parsed_link)
+          construct_complete_url(base_url, href, parsed_link)
         end
-      rescue
+      rescue StandardError
         nil
       end
     end.compact
   end
 
-  def construct_complete_url(base_url, additional_url, parsed_additional_url = nil) #:nodoc:
+  def construct_complete_url(base_url, additional_url, parsed_additional_url = nil) # :nodoc:
     parsed_additional_url ||= URI.parse(additional_url)
-    case parsed_additional_url.scheme
-      when nil
-        u = base_url.is_a?(URI) ? base_url : URI.parse(base_url)
-        # Include port if it's not the default port
-        port_part = (u.port && ((u.scheme == 'http' && u.port != 80) || (u.scheme == 'https' && u.port != 443))) ? ":#{u.port}" : ""
-        if additional_url[0].chr == '/'
-          "#{u.scheme}://#{u.host}#{port_part}#{additional_url}"
-        elsif u.path.nil? || u.path == ''
-          "#{u.scheme}://#{u.host}#{port_part}/#{additional_url}"
-        elsif u.path[0].chr == '/'
-          "#{u.scheme}://#{u.host}#{port_part}#{u.path}/#{additional_url}"
-        else
-          "#{u.scheme}://#{u.host}#{port_part}/#{u.path}/#{additional_url}"
-        end
-    else
-      additional_url
-    end
+    return additional_url unless parsed_additional_url.scheme.nil?
+    base = base_url.is_a?(URI) ? base_url : URI.parse(base_url.to_s)
+    URI.join(base, additional_url).to_s
   end
 
-  def remove_trailing_slash(s) #:nodoc:
-    s.sub(%r{/*$},'')
-  end
-
-  class HeaderSetter #:nodoc:
+  class HeaderSetter # :nodoc:
     def initialize(si)
       @si = si
     end
-    def []=(k,v)
-      @si.raw_headers = @si.raw_headers.merge({k => v})
+    def []=(k, v)
+      @si.raw_headers = @si.raw_headers.merge({ k => v })
     end
   end
 end
